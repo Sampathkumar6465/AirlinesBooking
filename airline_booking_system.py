@@ -1,68 +1,76 @@
-class Flight:
-    def __init__(self, flight_id, source, destination, seats, fare):
-        self.flight_id = flight_id
-        self.source = source
-        self.destination = destination
-        self.seats = seats
-        self.fare = fare
+class AirlineReservation:
+    def __init__(self):
+        self.flights = {
+            "AI101": 5,
+            "AI202": 3,
+            "AI303": 2
+        }
+        self.passengers = []
 
+    def show_flights(self):
+        print("\nAvailable Flights:")
+        for flight, seats in self.flights.items():
+            print(f"Flight: {flight} | Seats Available: {seats}")
 
-class Passenger:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-
-class Booking:
-    def __init__(self, passenger, flight):
-        self.passenger = passenger
-        self.flight = flight
-
-    def book_ticket(self):
-        if self.flight.seats > 0:
-            self.flight.seats -= 1
-            print("\n Ticket Booked Successfully")
-            print("Passenger Name :", self.passenger.name)
-            print("Passenger Age  :", self.passenger.age)
-            print("Flight ID      :", self.flight.flight_id)
-            print("Route          :", self.flight.source, "->", self.flight.destination)
-            print("Fare           :", self.flight.fare)
-            print("Seats Left     :", self.flight.seats)
+    def book_ticket(self, name, flight):
+        if flight in self.flights:
+            if self.flights[flight] > 0:
+                self.passengers.append((name, flight))
+                self.flights[flight] -= 1
+                print(f"\nTicket booked successfully for {name} on {flight}")
+            else:
+                print("\nNo seats available")
         else:
-            print("\n No seats available")
+            print("\nInvalid flight number")
+
+    def cancel_ticket(self, name):
+        for passenger in self.passengers:
+            if passenger[0] == name:
+                self.passengers.remove(passenger)
+                self.flights[passenger[1]] += 1
+                print(f"\nTicket cancelled for {name}")
+                return
+        print("\nPassenger not found")
+
+    def show_passengers(self):
+        print("\nPassenger List:")
+        if not self.passengers:
+            print("No passengers")
+        for p in self.passengers:
+            print(f"Name: {p[0]} | Flight: {p[1]}")
 
 
-# --------- Main Program ---------
+# -------- Main Program --------
+airline = AirlineReservation()
 
-# Flight objects
-flight1 = Flight(101, "Chennai", "Delhi", 2, 5500)
-flight2 = Flight(102, "Bangalore", "Mumbai", 1, 4500)
-flight3 = Flight(103, "Hyderabad", "Kolkata", 5, 6000)
-# Passenger input
-name = input("Enter Passenger Name: ")
-age = int(input("Enter Passenger Age: "))
+while True:
+    print("\n✈️ Airline Reservation System")
+    print("1. Show Flights")
+    print("2. Book Ticket")
+    print("3. Cancel Ticket")
+    print("4. Show Passengers")
+    print("5. Exit")
 
-# Show flights
-print("\nAvailable Flights")
-print("1.", flight1.flight_id, flight1.source, "->", flight1.destination,
-      "Seats:", flight1.seats, "Fare:", flight1.fare)
-print("2.", flight2.flight_id, flight2.source, "->", flight2.destination,
-      "Seats:", flight2.seats, "Fare:", flight2.fare)
-print("3.", flight3.flight_id, flight3.source, "->", flight3.destination,
-      "Seats:", flight3.seats, "Fare:", flight3.fare)
+    choice = int(input("Enter your choice: "))
 
-# Choose flight
-fid = int(input("\nEnter Flight ID to book: "))
+    if choice == 1:
+        airline.show_flights()
 
-# Passenger object
-passenger = Passenger(name, age)
+    elif choice == 2:
+        name = input("Enter passenger name: ")
+        flight = input("Enter flight number: ")
+        airline.book_ticket(name, flight)
 
-# Booking
-if fid == flight1.flight_id:
-    booking = Booking(passenger, flight1)
-    booking.book_ticket()
-elif fid == flight2.flight_id:
-    booking = Booking(passenger, flight2)
-    booking.book_ticket()
-else:
-    print("\n Invalid Flight ID")
+    elif choice == 3:
+        name = input("Enter passenger name to cancel: ")
+        airline.cancel_ticket(name)
+
+    elif choice == 4:
+        airline.show_passengers()
+
+    elif choice == 5:
+        print("Thank you for using Airline Reservation System ✨")
+        break
+
+    else:
+        print("Invalid choice")
